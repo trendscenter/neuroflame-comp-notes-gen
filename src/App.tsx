@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useEffect, useState } from 'react';
 import SectionInput from './components/SectionInput';
 import DynamicTable from './components/DynamicTable';
@@ -33,21 +32,27 @@ export default function App() {
   }, [step]);
 
   const updateSection = (index: number, value: string) => {
-    const updated = [...sections];
-    updated[index].content = value;
-    setSections(updated);
+    setSections(prev =>
+      prev.map((section, i) =>
+        i === index ? { ...section, content: value } : section
+      )
+    );
   };
 
   const saveSection = (index: number) => {
-    const updated = [...sections];
-    updated[index].saved = updated[index].content;
-    setSections(updated);
+    setSections(prev =>
+      prev.map((section, i) =>
+        i === index ? { ...section, saved: section.content } : section
+      )
+    );
   };
 
   const toggleSectionVisibility = (index: number) => {
-    const updated = [...sections];
-    updated[index].hidden = !updated[index].hidden;
-    setSections(updated);
+    setSections(prev =>
+      prev.map((section, i) =>
+        i === index ? { ...section, hidden: !section.hidden } : section
+      )
+    );
   };
 
   const prefillTableFromExampleSettings = () => {
@@ -67,87 +72,174 @@ export default function App() {
     }
   };
 
-  const nextStep = () => setStep(s => Math.min(s + 1, sectionLabels.length));
-  const prevStep = () => setStep(s => Math.max(s - 1, 0));
-
   return (
     <div className="app-container">
       <h1>Computation Notes Builder</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'row', columnGap: '2rem' }}>
-        <div style={{ flex: 0.5 }}>
-          <div style={{ position: 'fixed', width: 'calc(50% - 2rem)' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', columnGap: '1rem' }}>
+        <div style={{ flex: 0.4 }}>
+          <div style={{ position: 'fixed', width: 'calc(40% - 2rem)' }}>
             {step === 0 && (
-              <>
-                <SectionInput
-                  label={sections[0].label}
-                  value={sections[0].content}
-                  onChange={(val) => updateSection(0, val)}
-                  onSave={() => saveSection(0)}
-                />
-              </>
+              <SectionInput
+                label="Overview"
+                value={sections[0].content}
+                onChange={(val) => updateSection(0, val)}
+                onSave={() => {
+                  saveSection(0);
+                  setStep(1);
+                }}
+              />
             )}
 
             {step === 1 && (
               <SectionInput
-                label={sections[1].label}
+                label="Example Settings"
                 value={sections[1].content}
-                onChange={(val) => updateSection(1, val)}
                 isCode
-                onSave={() => saveSection(1)}
+                onChange={(val) => updateSection(1, val)}
+                onSave={() => {
+                  saveSection(1);
+                  setStep(2);
+                }}
               />
             )}
 
             {step === 2 && (
               <>
-                <div style={{display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'space-between'}}>
-                <h2>{sections[2].label}</h2>
-                <button onClick={prefillTableFromExampleSettings} style={{ marginTop: '1rem', marginBottom: '1rem' }} className="btn-blue">
-                  Pre-fill from Example Settings
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <h2>{sections[2].label}</h2>
+                  <button
+                    onClick={prefillTableFromExampleSettings}
+                    style={{ marginTop: '1rem', marginBottom: '1rem' }}
+                    className="btn-blue"
+                  >
+                    Pre-fill from Example Settings
+                  </button>
                 </div>
                 <DynamicTable data={tableData} setData={setTableData} />
+                <button style={{ marginTop: '1rem' }} onClick={() => setStep(3)}>
+                  Next
+                </button>
               </>
             )}
 
-            {step >= 3 && step <= 6 && (
+            {step === 3 && (
               <>
-              <SectionInput
-                label={sections[step].label}
-                value={sections[step].content}
-                onChange={(val) => updateSection(step, val)}
-                onSave={() => saveSection(step)}
-              />
-              <label>
-                <input
-                  type="checkbox"
-                  checked={sections[step].hidden}
-                  onChange={() => toggleSectionVisibility(step)}
-                  style={{ marginRight: '0.5rem' }}
+                <SectionInput
+                  label="Algorithm Description"
+                  value={sections[3].content}
+                  onChange={(val) => updateSection(3, val)}
+                  onSave={() => {
+                    saveSection(3);
+                    setStep(4);
+                  }}
                 />
-                Hide Section
-              </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={sections[3].hidden}
+                    onChange={() => toggleSectionVisibility(3)}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  Hide Section
+                </label>
               </>
             )}
 
-            <div style={{ marginBottom: '1rem' }}>
-              <button onClick={prevStep} disabled={step === 0}>Previous</button>
-              <span style={{ margin: '0 1rem' }}>Step {step + 1} of 7</span>
-              <button onClick={nextStep} disabled={step === 6}>Next</button>
-            </div>
+            {step === 4 && (
+              <>
+                <SectionInput
+                  label="Assumptions"
+                  value={sections[4].content}
+                  onChange={(val) => updateSection(4, val)}
+                  onSave={() => {
+                    saveSection(4);
+                    setStep(5);
+                  }}
+                />
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={sections[4].hidden}
+                    onChange={() => toggleSectionVisibility(4)}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  Hide Section
+                </label>
+              </>
+            )}
 
+            {step === 5 && (
+              <>
+                <SectionInput
+                  label="Output Description"
+                  value={sections[5].content}
+                  onChange={(val) => updateSection(5, val)}
+                  onSave={() => {
+                    saveSection(5);
+                    setStep(6);
+                  }}
+                />
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={sections[5].hidden}
+                    onChange={() => toggleSectionVisibility(5)}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  Hide Section
+                </label>
+              </>
+            )}
+
+            {step === 6 && (
+              <>
+                <SectionInput
+                  label="TODOs"
+                  value={sections[6].content}
+                  onChange={(val) => updateSection(6, val)}
+                  onSave={() => {
+                    saveSection(6);
+                  }}
+                />
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={sections[6].hidden}
+                    onChange={() => toggleSectionVisibility(6)}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  Hide Section
+                </label>
+              </>
+            )}
+
+            <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+              <button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}>
+                Previous
+              </button>
+              <span style={{ margin: '0 1rem' }}>
+                Step {step + 1} of {sectionLabels.length}
+              </span>
+              <button
+                onClick={() => setStep((s) => Math.min(sectionLabels.length - 1, s + 1))}
+                disabled={step === sectionLabels.length - 1}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
 
-        <div style={{ flex: 0.5 }}>
+        <div style={{ flex: 0.6 }}>
           <MarkdownConverter
-            sections={sections.map(({ label, saved, hidden }) => ({
+            sections={sections.map(({ label, saved, content, hidden }) => ({
               label,
-              content: saved || '',
+              content: saved || content,
               hidden
             }))}
             tableData={tableData}
-            showConvertButton={step === 8}
+            showConvertButton={step === 6}
           />
         </div>
       </div>

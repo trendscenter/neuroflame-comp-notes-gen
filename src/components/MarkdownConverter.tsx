@@ -80,7 +80,7 @@ export default function MarkdownConverter({ sections, tableData, showConvertButt
             ) : i === 2 ? (
             <>
               <div dangerouslySetInnerHTML={{ __html: section.content }} />
-              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              <div style={{ maxHeight: '300px', maxWidth: '50vw', overflowY: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>

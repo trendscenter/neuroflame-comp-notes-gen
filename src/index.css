@@ -71,7 +71,7 @@ button:focus-visible {
   max-height: 500px;
   max-width: 800px;
   margin-bottom: 1rem;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .tiptap {
