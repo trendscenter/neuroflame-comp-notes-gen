@@ -5,6 +5,15 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Code from '@tiptap/extension-code';
 import DOMPurify from 'dompurify';
+import {
+  Bold,
+  Italic,
+  Underline,
+  Code2,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
+} from 'lucide-react';
 
 interface Props {
   label: string;
@@ -79,20 +88,17 @@ export default function SectionInput({ label, value, onChange, isCode, onSave, t
         justifyContent: 'space-between' 
       }}>
       <div style={{ display: 'flex', flexDirection: 'row', flex: '0.5'}}>
-        <button onClick={() => editor?.chain().focus().toggleBold().run()} style={{ marginRight: '0.25rem' }}>
-          <strong>B</strong>
+        <button onClick={() => editor?.chain().focus().toggleBold().run()}>
+          <Bold size={18} />
         </button>
-        <button onClick={() => editor?.chain().focus().toggleItalic().run()} style={{ marginRight: '0.25rem' }}>
-          <em>I</em>
+        <button onClick={() => editor?.chain().focus().toggleItalic().run()}>
+          <Italic size={18} />
         </button>
-        <button onClick={() => editor?.chain().focus().toggleUnderline?.().run()} style={{ marginRight: '0.25rem' }}>
-          <u>U</u>
+        <button onClick={() => editor?.chain().focus().toggleUnderline?.().run()}>
+          <Underline size={18} />
         </button>
-        <button
-          onClick={() => editor?.chain().focus().toggleCode().run()}
-          style={{ marginRight: '0.25rem' }}
-        >
-          <code>{'</>'}</code>
+        <button onClick={() => editor?.chain().focus().toggleCode().run()}>
+          <Code2 size={18} />
         </button>
         <button
           onClick={() => {
@@ -102,7 +108,13 @@ export default function SectionInput({ label, value, onChange, isCode, onSave, t
             }
           }}
         >
-          🔗
+          <LinkIcon size={18} />
+        </button>
+        <button onClick={() => editor?.chain().focus().toggleBulletList().run()}>
+          <List size={18} />
+        </button>
+        <button onClick={() => editor?.chain().focus().toggleOrderedList().run()}>
+          <ListOrdered size={18} />
         </button>
       </div>
       {!table && <button onClick={onSave} className='btn-green'>Save</button>}
