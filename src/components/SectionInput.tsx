@@ -4,10 +4,10 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Code from '@tiptap/extension-code';
+import DOMPurify from 'dompurify';
 
 interface Props {
   label: string;
-  value: string;
   onChange: (value: string) => void;
   isCode?: boolean;
   onSave?: () => void;
@@ -24,7 +24,7 @@ export default function SectionInput({ label, value, onChange, isCode, onSave, t
       Link.configure({
         openOnClick: true,
         autolink: false,
-        linkOnPaste: true,
+        linkOnPaste: false,
       }),
     ],
     content: value,
@@ -33,15 +33,39 @@ export default function SectionInput({ label, value, onChange, isCode, onSave, t
   useEffect(() => {
     if (editor && !hasInitialized.current) {
       hasInitialized.current = true;
-      editor.commands.setContent(value);
+  
+      let cleaned = value.replace(/<a[^>]*>(.*?)<\/a>/gi, '$1');
+  
+      cleaned = cleaned.replace(
+        /\b[\w./-]+\.(py|csv|aseg|nii(?:\.gz)?)\b/g,
+        (match) => `<code>${match}</code>`
+      );
+  
+      const sanitized = DOMPurify.sanitize(cleaned, {
+        ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'code', 'a', 'br', 'pre'],
+        ALLOWED_ATTR: ['href', 'target', 'rel'],
+      });
+  
+      editor.commands.setContent(sanitized);
+  
+      // ✅ Force removal of any residual link marks
+      editor.commands.unsetMark('link');
     }
   }, [editor, value]);
 
   const handleBlur = () => {
     if (editor) {
-      const html = editor.getHTML();
-      if (html !== value) {
-        onChange(html);
+      const rawHtml = editor.getHTML();
+  
+      // Remove any accidental <a> tags
+      const noLinks = rawHtml.replace(/<a[^>]*>(.*?)<\/a>/gi, '$1');
+  
+      const sanitized = DOMPurify.sanitize(noLinks, {
+        ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'code', 'br', 'ul', 'li', 'ol', 'pre'],
+      });
+  
+      if (sanitized !== value) {
+        onChange(sanitized);
       }
     }
   };

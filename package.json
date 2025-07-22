@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://trendscenter.github.io/neuroflame-comp-notes-gen",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -26,6 +27,7 @@
     "@tiptap/react": "^2.11.9",
     "@tiptap/starter-kit": "^2.11.9",
     "classnames": "^2.5.1",
+    "dompurify": "^3.2.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",

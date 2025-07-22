@@ -30,33 +30,27 @@ export default function MarkdownConverter({ sections, tableData, showConvertButt
   const convertToMarkdown = () => {
     const turndown = new TurndownService();
 
+    // Build the markdown in order, replacing "Settings Specification" with the table
     let md = sections
       .map((section, i) => {
-        if (i === 1) {
-          return `### ${section.label}\n\n\
-\`\`\`json\n${section.content}\n\`\`\``;
+        if (section.label === 'Settings Specification') {
+          const headers = '| Variable Name | Type | Description | Allowed Options | Default | Required |';
+          const divider = '| --- | --- | --- | --- | --- | --- |';
+          const rows = tableData
+          .map(row => `| \`${row.column1 || ' '}\` | \`${row.column2 || ' '}\` | ${turndown.turndown(row.column3 || '')} | ${turndown.turndown(row.column4 || '')} | ${row.column5 || ' '} | ${row.column6 ? '✅ true' : '❌ false'} |`)
+            .join('\n');
+          return `### Settings Specification\n\n${headers}\n${divider}\n${rows}`;
         }
+    
+        if (i === 1) {
+          return `### ${section.label}\n\n\`\`\`json\n${section.content}\n\`\`\``;
+        }
+    
         return `### ${section.label}\n\n${turndown.turndown(section.content)}`;
       })
       .join('\n\n');
 
-    if (tableData.length > 0) {
-      const headers = '| Variable Name | Type | Description | Allowed Options | Default |';
-      const divider = '| --- | --- | --- | --- | --- |';
-      const rows = tableData
-        .map(row => `| ${row.column1 || ' '} | ${row.column2 || ' '} | ${turndown.turndown(row.column3 || '')} | ${turndown.turndown(row.column4 || '')} | ${row.column5 || ' '} |`)
-        .join('\n');
-      const tableMarkdown = `### Data Format Spefication\n\n${headers}\n${divider}\n${rows}`;
-
-      const section2Index = md.indexOf('### Example Settings');
-      if (section2Index !== -1) {
-        md = md.slice(0, section2Index + '### Example Settings'.length) + '\n\n' + tableMarkdown + md.slice(section2Index + '### Example Settings'.length);
-      } else {
-        md += '\n\n' + tableMarkdown;
-      }
-    }
-
-    setMarkdown(md);
+      setMarkdown(md);
   };
 
   const handleCopy = () => {
@@ -73,14 +67,14 @@ export default function MarkdownConverter({ sections, tableData, showConvertButt
           section.hidden ? null : (
             <div key={i} id={`section-${i}`} style={{ scrollMarginTop: '80px', marginBottom: '2rem' }}>
             <h3>{section.label}</h3>
-            {i === 1 ? (
+            {i === 1 && section.content ? (
             <pre style={{ backgroundColor: '#f5f5f5', padding: '0.5rem' }}>
               <code>{section.content}</code>
             </pre>
             ) : i === 2 ? (
             <>
               <div dangerouslySetInnerHTML={{ __html: section.content }} />
-              <div style={{ maxHeight: '300px', maxWidth: '50vw', overflowY: 'auto' }}>
+              <div style={{ maxHeight: '300px', maxWidth: '60vw', overflowY: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>

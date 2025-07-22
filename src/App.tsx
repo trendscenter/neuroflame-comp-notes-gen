@@ -7,10 +7,10 @@ const sectionLabels = [
   'Overview',
   'Example Settings',
   'Settings Specification',
+  'Input Description',
   'Algorithm Description',
   'Assumptions',
-  'Output Description',
-  'TODOs'
+  'Output Description'
 ];
 
 export default function App() {
@@ -126,7 +126,7 @@ export default function App() {
             {step === 3 && (
               <>
                 <SectionInput
-                  label="Algorithm Description"
+                  label="Input Description"
                   value={sections[3].content}
                   onChange={(val) => updateSection(3, val)}
                   onSave={() => {
@@ -149,7 +149,7 @@ export default function App() {
             {step === 4 && (
               <>
                 <SectionInput
-                  label="Assumptions"
+                  label="Algorithm Description"
                   value={sections[4].content}
                   onChange={(val) => updateSection(4, val)}
                   onSave={() => {
@@ -161,7 +161,7 @@ export default function App() {
                   <input
                     type="checkbox"
                     checked={sections[4].hidden}
-                    onChange={() => toggleSectionVisibility(4)}
+                    onChange={() => toggleSectionVisibility(3)}
                     style={{ marginRight: '0.5rem' }}
                   />
                   Hide Section
@@ -172,7 +172,7 @@ export default function App() {
             {step === 5 && (
               <>
                 <SectionInput
-                  label="Output Description"
+                  label="Assumptions"
                   value={sections[5].content}
                   onChange={(val) => updateSection(5, val)}
                   onSave={() => {
@@ -184,7 +184,7 @@ export default function App() {
                   <input
                     type="checkbox"
                     checked={sections[5].hidden}
-                    onChange={() => toggleSectionVisibility(5)}
+                    onChange={() => toggleSectionVisibility(4)}
                     style={{ marginRight: '0.5rem' }}
                   />
                   Hide Section
@@ -195,7 +195,7 @@ export default function App() {
             {step === 6 && (
               <>
                 <SectionInput
-                  label="TODOs"
+                  label="Output Description"
                   value={sections[6].content}
                   onChange={(val) => updateSection(6, val)}
                   onSave={() => {
